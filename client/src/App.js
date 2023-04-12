@@ -15,7 +15,14 @@ function App() {
     });
   };
 
-  const handleClickLogin = (values) => console.log(values)
+  const handleClickLogin = (values) => {
+    Axios.post("http://localhost:3001/login", {
+      email: values.email,
+      password: values.password,
+    }).then((response) => {
+      alert(response.data.msg);
+    });
+  };
 
   const validationsLogin = yup.object().shape({
     email: yup
