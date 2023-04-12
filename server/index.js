@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql");
 const cors = require("cors");
-
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 const db = mysql.createPool({
   host: "localhost",
@@ -23,9 +24,10 @@ app.post("/register", (req, res) => {
       res.send(err);
     }
     if (result.length == 0) {
+      bcrypt.hash(password, saltRounds, (err, hash) => {
         db.query(
           "INSERT INTO usuarios (email, password) VALUE (?,?)",
-          [email, password],
+          [email, hash],
           (error, response) => {
             if (err) {
               res.send(err);
@@ -34,6 +36,7 @@ app.post("/register", (req, res) => {
             res.send({ msg: "Cadastrado com sucesso"})
           }
         );
+      })
     } else {
       res.send({ msg: "Usuário já cadastrado"})
     }
